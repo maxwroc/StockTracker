@@ -4,6 +4,8 @@
   "description": "Tracking selected stocks from various markets",
   "main": "index.js",
   "scripts": {
+    "build": "node node_modules/typescript/lib/tsc.js -p src/tsconfig.json",
+    "run": "node src/server.js",
     "test": "gulp test"
   },
   "author": "maxwroc",

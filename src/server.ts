@@ -5,13 +5,8 @@ let mach = require("mach");
 
 let providers = getProviders("PL");
 
-// interate through providers untill valid results returned
-
-
 var app = mach.stack();
-
 app.use(mach.logger);
-
 app.get('/stock/:id', conn => {
   var id = conn.params.id;
 
