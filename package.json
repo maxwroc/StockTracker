@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^10.3.3",
     "axios": "^0.18.0",
+    "nodemon": "^1.17.5",
     "typescript": "^2.9.2"
   },
   "dependencies": {
