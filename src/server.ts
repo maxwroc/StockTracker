@@ -1,20 +1,18 @@
 ///<reference path="shared.d.ts" />
 
-import { getProviders } from "./providers/provider";
-import mach from "mach";
+import { MainController } from "./controllers/main.controller";
+import { StockController } from "./controllers/stock.controller";
 
-let providers = getProviders("PL");
+const mach = require("mach");
+const mongoose = require("mongoose");
 
-var app = mach.stack();
+const controllers = [MainController, StockController];
+
+let app = mach.stack();
 app.use(mach.logger);
-app.get("/", conn => {
-  return "hello preschool!!!"
-});
-app.get('/stock/:id', conn => {
-  var id = conn.params.id;
 
-  return providers[0].getData(id)
-        .then(s => conn.json(200, s))
-});
+let database = null;
+
+controllers.forEach(c => new c(app, database));
 
 mach.serve(app);
