@@ -2,6 +2,8 @@
 
 const mongoose = require("mongoose");
 
+import master from "../views/master.page";
+
 let Schema = mongoose.Schema;
 
 var StockType = new Schema({
@@ -19,6 +21,8 @@ export class MainController {
     }
 
     private getIndex(conn: any): void {
-        conn.file("src/views/index.html");
+        conn.send(
+            master({ title: "hello title", body: "hello body" })
+        );
     }
 }
