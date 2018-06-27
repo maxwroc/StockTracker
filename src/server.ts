@@ -1,5 +1,3 @@
-///<reference path="shared.d.ts" />
-
 import { MainController } from "./controllers/main.controller";
 import { StockController } from "./controllers/stock.controller";
 
@@ -8,20 +6,18 @@ const mongoose = require("mongoose");
 
 const controllers = [MainController, StockController];
 
-let app = mach.stack();
-app.use(mach.logger);
-
-//Set up default mongoose connection
-let mongoDB = 'mongodb://192.168.2.103:27017/stocktracker';
-mongoose.connect(mongoDB);
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
-//Get the default connection
-let database = mongoose.connection;
+mongoose.connect('mongodb://192.168.2.103:27017/stocktracker', {
+    useMongoClient: true,
+}).then(db => {
+    let app = mach.stack();
+    app.use(mach.logger);
 
-//Bind connection to error event (to get notification of connection errors)
-database.on('error', console.error.bind(console, 'MongoDB connection error:'));
+    //Bind connection to error event (to get notification of connection errors)
+    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-controllers.forEach(c => new c(app, database));
+    controllers.forEach(c => new c(app, db));
 
-mach.serve(app);
+    mach.serve(app);
+});
