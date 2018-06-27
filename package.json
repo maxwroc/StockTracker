@@ -4,9 +4,8 @@
   "description": "Tracking selected stocks from various markets",
   "main": "index.js",
   "scripts": {
-    "build": "node node_modules/typescript/lib/tsc.js -p src/tsconfig.json",
-    "run": "node src/server.js",
-    "dev": "node_modules/.bin/nodemon src/server.js",
+    "start": "node_modules/.bin/ts-node src/server.ts",
+    "dev": "node_modules/.bin/nodemon",
     "test": "gulp test"
   },
   "author": "maxwroc",
@@ -16,6 +15,7 @@
     "@types/react": "^16.4.1",
     "@types/react-dom": "^16.0.6",
     "nodemon": "^1.17.5",
+    "ts-node": "^7.0.0",
     "typescript": "^2.9.2"
   },
   "dependencies": {

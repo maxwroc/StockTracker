@@ -12,7 +12,7 @@ let app = mach.stack();
 app.use(mach.logger);
 
 //Set up default mongoose connection
-let mongoDB = 'mongodb://192.168.2.103:27017/my_database';
+let mongoDB = 'mongodb://192.168.2.103:27017/stocktracker';
 mongoose.connect(mongoDB);
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
