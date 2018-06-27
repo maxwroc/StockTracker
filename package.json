@@ -6,8 +6,8 @@
   "scripts": {
     "build": "node node_modules/typescript/lib/tsc.js -p src/tsconfig.json",
     "start": "node_modules/.bin/ts-node src/server.ts",
+    "start:debug": "node --inspect=5858 -r ts-node/register src/server.ts",
     "dev": "node_modules/.bin/nodemon",
-    "dev:debug": "node --inspect=5858 -r ts-node/register src/server.ts",
     "test": "gulp test"
   },
   "author": "maxwroc",
