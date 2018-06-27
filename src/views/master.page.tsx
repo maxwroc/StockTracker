@@ -1,4 +1,4 @@
-const master = ({ title, body }) => `
+const Master = ({ title, body }) => `
   <!DOCTYPE html>
   <html>
     <head>
@@ -10,4 +10,4 @@ const master = ({ title, body }) => `
   </html>
 `;
 
-export default master;
+export default Master;
