@@ -6,6 +6,7 @@ interface IStockData extends IBankierStockData {
 interface IProvider {
     market: string;
     getData(symbol: string): Promise<IStockData>;
+    getSymbols(query: string): Promise<string[]>;
 }
 
 interface IBankierStockData {

@@ -4,18 +4,25 @@ import { getProviders } from "../providers/provider";
 
 export class StockController {
     constructor(app: any, database: any) {
+        app.get('/stock/search/:symbol', conn => this.searchSymbol(conn, conn.params.symbol));
         app.get('/stock/:symbol', conn => this.getStock(conn, conn.params.symbol));
-        app.post('/stock', conn => this.addStock(conn, JSON.stringify(conn.params)));
+        app.post('/stock', conn => this.addStock(conn, conn.params.name));
     }
 
     private getStock(conn: any, symbol: string): Promise<IStockData> {
         let providers = getProviders("PL");
         return providers[0].getData(symbol)
-                  .then(s => conn.json(200, s))
+            .then(s => conn.json(200, s));
     }
 
     private addStock(conn:any, name: string) {
         return "Name: " + name;
+    }
+
+    private searchSymbol(conn: any, query: string) {
+        let providers = getProviders("PL");
+        return providers[0].getSymbols(query)
+            .then(s => conn.json(200, s));
     }
 }
 
