@@ -4,7 +4,7 @@ import { getProviders } from "../providers/provider";
 
 export class StockController {
     constructor(app: any, database: any) {
-        app.get('/stock/search/:symbol', conn => this.searchSymbol(conn, conn.params.symbol));
+        app.post('/stock/search', conn => this.searchSymbol(conn, conn.params.name));
         app.get('/stock/:symbol', conn => this.getStock(conn, conn.params.symbol));
         app.post('/stock', conn => this.addStock(conn, conn.params.name));
     }
@@ -20,9 +20,14 @@ export class StockController {
     }
 
     private searchSymbol(conn: any, query: string) {
+
+        if (query == "") {
+            return conn.json(200, { error: "Query cannot be empty" });
+        }
+
         let providers = getProviders("PL");
         return providers[0].getSymbols(query)
-            .then(s => conn.json(200, s));
+            .then(s => conn.json(200, { success: "OK", result: s }));
     }
 }
 
