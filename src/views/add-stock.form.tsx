@@ -6,9 +6,11 @@ export const Element = () => {
     addScriptFile("jquery.min.js", "add-stock.js");
     return (
         <form method="post" action="/stock" id="add-stock">
-            <input type="text" name="name" list="symbols" /> <input type="submit" value="Add" />
+            <input type="text" name="name" list="symbols" autoCorrect="off" autoComplete="off" /> <input type="submit" value="Add" />
+            <div className="loader hidden"></div>
             <datalist id="symbols">
             </datalist>
+            <div id="message"></div>
         </form>
     );
 }

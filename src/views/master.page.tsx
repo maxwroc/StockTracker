@@ -8,6 +8,7 @@ const Master = ({ title, body }) => {
 <html>
   <head>
     <title>${title}</title>
+    <link rel="stylesheet" href="/css/main.css">
     ${scriptsString}
   </head>
   <body style="margin:0">

@@ -6,7 +6,7 @@ export class StockController {
     constructor(app: any, database: any) {
         app.post('/stock/search', conn => this.searchSymbol(conn, conn.params.name));
         app.get('/stock/:symbol', conn => this.getStock(conn, conn.params.symbol));
-        app.post('/stock', conn => this.addStock(conn, conn.params.name));
+        app.post('/stock/add', conn => this.addStock(conn, conn.params.name));
     }
 
     private getStock(conn: any, symbol: string): Promise<IStockData> {
@@ -16,7 +16,7 @@ export class StockController {
     }
 
     private addStock(conn:any, name: string) {
-        return "Name: " + name;
+        return conn.json(200, { error: "zonk" })
     }
 
     private searchSymbol(conn: any, query: string) {
