@@ -9,7 +9,7 @@ export class WalletController {
     constructor(app: any, database: any) {
         app.get("/", conn => conn.redirect("/wallet"));
         app.get("/wallet", conn => this.getIndex(conn));
-        app.post("/wallet/add", conn => this.addStock(conn, conn.params.name));
+        app.post("/wallet/add", conn => this.createNewWallet(conn, conn.params.name));
     }
 
     private getIndex(conn: any) {
@@ -29,7 +29,12 @@ export class WalletController {
             });
     }
 
-    private addStock(conn: any, name: string) {
+    private createNewWallet(conn: any, name: string) {
+
+        if (name == "") {
+            return new Promise(r => setTimeout(() => r(), 2000)).then(() => conn.json(200, { error: "Name cannot be empty" }));
+        }
+
         return new WalletModel({ name: name, createdAt: new Date() })
             .save()
             .then(w => conn.json(200, { success: "OK", redirect: "/" }))

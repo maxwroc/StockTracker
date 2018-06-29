@@ -20,8 +20,9 @@ walletSchema.pre("save", next => {
     }
 
     next();
-  });
+});
 
 export let Wallet = mongoose.model("Wallet", walletSchema);
+
 
 export default Wallet;

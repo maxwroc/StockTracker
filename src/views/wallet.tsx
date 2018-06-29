@@ -7,8 +7,7 @@ import { DataTable } from "./shared/datatable";
 export const Wallet = ({ data }) =>
     <div>
         <div>
-            <div>Add a new wallet</div>
-            <AddItemForm formAction="/wallet/add" suggestionsDataUrl="" />
+            <AddItemForm formAction="/wallet/add" suggestionsDataUrl="" submitBtnText="Add new wallet" />
         </div>
         <DataTable data={data} columns={["name", "createdAt"]} />
     </div>;

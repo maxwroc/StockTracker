@@ -9,6 +9,7 @@ const Master = ({ title, body }) => {
   <head>
     <title>${title}</title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     ${scriptsString}
   </head>
   <body style="margin:0">
