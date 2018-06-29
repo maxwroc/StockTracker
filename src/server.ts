@@ -1,11 +1,8 @@
 import * as path from "path";
-import { MainController } from "./controllers/main.controller";
-import { StockController } from "./controllers/stock.controller";
+import { controllers } from "./controllers";
 
 import * as mach from "mach";
 const mongoose = require("mongoose");
-
-const controllers = [MainController, StockController];
 
 // Get Mongoose to use the global promise library
 mongoose.Promise = global.Promise;
