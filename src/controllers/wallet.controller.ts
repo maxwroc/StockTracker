@@ -1,6 +1,4 @@
-
-
-import * as Wallet from "../views/wallet";
+import * as WalletList from "../views/wallet-list";
 import Master from "../views/master.page";
 
 import { Wallet as WalletModel } from "../models/wallet";
@@ -9,6 +7,7 @@ export class WalletController {
     constructor(app: any, database: any) {
         app.get("/", conn => conn.redirect("/wallet"));
         app.get("/wallet", conn => this.getIndex(conn));
+        app.post("/wallet/search", conn => this.search(conn));
         app.post("/wallet/add", conn => this.createNewWallet(conn, conn.params.name));
     }
 
@@ -17,15 +16,23 @@ export class WalletController {
             .exec() // get promise
             .then(wallets => {
                 conn.send(
-                    Master({ title: "Wallet", body: Wallet.toString({ data: wallets }) })
+                    Master({ title: "Wallet list", body: WalletList.toString({ data: wallets }) })
                 );
             })
             .catch(r => {
                 // TODO: remove console.log
                 console.log("Rejected", r);
                 conn.send(
-                    Master({ title: "Wallet", body: Wallet.toString({ data: [] }) })
+                    Master({ title: "Wallet list", body: WalletList.toString({ data: [] }) })
                 );
+            });
+    }
+
+    private search(conn: any) {
+        return WalletModel.find({})
+            .exec() // get promise
+            .then(wallets => {
+                conn.json(200, { success: "OK", result: wallets.map(w => w["name"]) })
             });
     }
 

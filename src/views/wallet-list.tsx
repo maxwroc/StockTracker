@@ -4,7 +4,7 @@ import { renderToString } from "react-dom/server";
 import { AddItemForm } from "./add-item.form";
 import { DataTable } from "./shared/datatable";
 
-export const Wallet = ({ data }) =>
+export const WalletList = ({ data }) =>
     <div>
         <div>
             <AddItemForm formAction="/wallet/add" suggestionsDataUrl="" submitBtnText="Add new wallet" />
@@ -13,6 +13,6 @@ export const Wallet = ({ data }) =>
     </div>;
 
 export const toString = ({ data }) =>
-    renderToString(<Wallet data={data} />);
+    renderToString(<WalletList data={data} />);
 
-export default Wallet;
+export default WalletList;
