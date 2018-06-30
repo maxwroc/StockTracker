@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 // create a schema
 let walletSchema = new Schema({
     name: String,
-    stocks: Array,
+    stocks: [{ type: Schema.Types.ObjectId, ref: "Stock" }],
     createdAt: Date
 });
 

@@ -1,4 +1,4 @@
-import * as WalletList from "../views/wallet-list";
+import * as WalletList from "../views/wallet/wallet-list";
 import Master from "../views/master.page";
 
 import { Wallet as WalletModel } from "../models/wallet";
@@ -6,17 +6,18 @@ import { Wallet as WalletModel } from "../models/wallet";
 export class WalletController {
     constructor(app: any, database: any) {
         app.get("/", conn => conn.redirect("/wallet"));
-        app.get("/wallet", conn => this.getIndex(conn));
+        app.get("/wallet", conn => this.getWalletList(conn));
+        app.get("/wallet/:name", conn => this.getWallet(conn, conn.params.name));
         app.post("/wallet/search", conn => this.search(conn));
         app.post("/wallet/add", conn => this.createNewWallet(conn, conn.params.name));
     }
 
-    private getIndex(conn: any) {
+    private getWalletList(conn: any) {
         return WalletModel.find({})
             .exec() // get promise
             .then(wallets => {
                 conn.send(
-                    Master({ title: "Wallet list", body: WalletList.toString({ data: wallets }) })
+                    Master({ title: "Wallet list", body: WalletList.toString({ data: this.decorateWithUrl(wallets) }) })
                 );
             })
             .catch(r => {
@@ -26,6 +27,12 @@ export class WalletController {
                     Master({ title: "Wallet list", body: WalletList.toString({ data: [] }) })
                 );
             });
+    }
+
+    private getWallet(conn, name) {
+        return conn.send(
+            Master({ title: "Wallet list", body: name })
+        );
     }
 
     private search(conn: any) {
@@ -46,6 +53,11 @@ export class WalletController {
             .save()
             .then(w => conn.json(200, { success: "OK", redirect: "/" }))
             .catch(r => conn.json(200, { error: r }));
+    }
+
+    private decorateWithUrl(wallets: any[]) {
+        wallets.forEach(w => w.url = "/wallet/" + encodeURIComponent(w.name));
+        return wallets;
     }
 }
 
