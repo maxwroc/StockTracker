@@ -1,5 +1,5 @@
-import * as WalletList from "../views/wallet/wallet-list";
-import Master from "../views/master.page";
+import { WalletList, IWalletListProps } from "../views/wallet/wallet-list";
+import { Master, jsxToString } from "../views/master.page";
 
 import { Wallet as WalletModel } from "../models/wallet";
 
@@ -17,21 +17,24 @@ export class WalletController {
             .exec() // get promise
             .then(wallets => {
                 conn.send(
-                    Master({ title: "Wallet list", body: WalletList.toString({ data: this.decorateWithUrl(wallets) }) })
+                    Master({
+                        title: "Wallet list",
+                        body: jsxToString(WalletList, { data: this.decorateWithUrl(wallets) })
+                    })
                 );
             })
             .catch(r => {
                 // TODO: remove console.log
                 console.log("Rejected", r);
                 conn.send(
-                    Master({ title: "Wallet list", body: WalletList.toString({ data: [] }) })
+                    Master({ title: "Wallet list", body: jsxToString(WalletList, {}) })
                 );
             });
     }
 
     private getWallet(conn, name) {
         return conn.send(
-            Master({ title: "Wallet list", body: name })
+            Master<IWalletListProps>({ title: "Wallet list", body: jsxToString(WalletList, { data: [] }) })
         );
     }
 

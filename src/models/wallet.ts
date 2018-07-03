@@ -1,6 +1,11 @@
-import * as mongoose from "mongoose";
+import { model, Document, Model, Schema } from "mongoose";
 
-let Schema = mongoose.Schema;
+
+export interface IWalletModel extends Document {
+    name: string,
+    stocks: any[],
+    createdAt: Date
+}
 
 // create a schema
 let walletSchema = new Schema({
@@ -22,7 +27,7 @@ walletSchema.pre("save", next => {
     next();
 });
 
-export let Wallet = mongoose.model("Wallet", walletSchema);
+export let Wallet: Model<IWalletModel> = model("Wallet", walletSchema);
 
 
 export default Wallet;

@@ -1,9 +1,18 @@
 
+import { renderToString } from "react-dom/server";
+
+
 const scripts: { [script: string]: number } = {};
 
-const Master = ({ title, body }) => {
-  const scriptsString = Object.keys(scripts).map(s => `<script src="${s}"></script>`).join("");
-  return `
+export interface IMasterProps<T> {
+  title: string,
+  body: string
+}
+
+export function Master<T>(props: IMasterProps<T>) {
+    const { title, body } = props;
+    const scriptsString = Object.keys(scripts).map(s => `<script src="${s}"></script>`).join("");
+    return `
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,13 +29,17 @@ const Master = ({ title, body }) => {
 }
 
 export function addScriptFile(...files: string[]) {
-  files.forEach(f => {
-    if (!f.startsWith("http") && !f.startsWith("js/")) {
-      f = "js/" + f;
-    }
+    files.forEach(f => {
+        if (!f.startsWith("http") && !f.startsWith("js/")) {
+            f = "js/" + f;
+        }
 
-    scripts[f] = 1;
-  });
+        scripts[f] = 1;
+    });
+}
+
+export function jsxToString<T>(elemConstructor: { (props: T): JSX.Element }, props: T): string {
+  return renderToString(elemConstructor(props));
 }
 
 export default Master;
