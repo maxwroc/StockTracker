@@ -1,19 +1,21 @@
+///<reference path="../../shared.d.ts" />
 
 import * as React from 'react';
-import { IWalletModel } from "../../models/wallet";
+import { AddItemForm } from "../add-item.form";
+import { DataTable } from "../shared/datatable";
+
+import { IWalletModel } from "../../models/wallet"
 
 interface IWalletViewProps {
     wallet: IWalletModel
 }
 
-interface IView {
-    (wallet: IWalletViewProps): JSX.Element;
-}
-
-export const Wallet: IView = ({ wallet }) =>
+export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
     <div>
         <h1>Wallet details</h1>
         <h3>Name: {wallet.name}</h3>
+        <AddItemForm formAction={"/wallet/" + encodeURIComponent(wallet.name)} suggestionsDataUrl="/stock/search" submitBtnText="Add symbol to track" />
+        <DataTable isClickable={false} data={wallet.stocks} columns={["name", "symbol", "companyName"]} />
     </div>;
 
 

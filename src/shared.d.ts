@@ -40,3 +40,7 @@ interface IBankierStockData {
         startDate: string, //'2018-06-13 09:00'
     }
 }
+
+interface IViewConstructor<T> {
+    (props: T): JSX.Element;
+}

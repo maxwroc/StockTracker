@@ -9,7 +9,7 @@ export interface IWalletListProps {
     data: IWalletModel[]
 }
 
-export const WalletList: { (props: IWalletListProps): JSX.Element } = ({ data }) =>
+export const WalletList: IViewConstructor<IWalletListProps> = ({ data }) =>
     <div>
         <div>
             <AddItemForm formAction="/wallet/add" suggestionsDataUrl="" submitBtnText="Add new wallet" />

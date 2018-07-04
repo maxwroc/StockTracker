@@ -3,6 +3,26 @@ import { addScriptFile } from "../master.page";
 
 let counter = 0;
 
+export interface IDataTableProps {
+    data: any[];
+    columns: string[] | { [column: string]: string };
+    isClickable?: boolean;
+}
+
+export const DataTable: IViewConstructor<IDataTableProps> = ({ data, columns, isClickable }) => {
+    isClickable && addScriptFile("datatable.js");
+    return (
+        <table className="datatable table table-sm table-hover">
+            <Headers columns={columns} />
+            <tbody>
+                {data.map(row =>
+                    <Row key={counter++} columns={columns} data={row} isClickable={isClickable} />
+                )}
+            </tbody>
+        </table>
+    );
+}
+
 const formatValue = val => {
     if (val instanceof Date) {
         return val.toDateString();
@@ -36,16 +56,3 @@ const Headers = ({ columns }) =>
         </tr>
     </thead>;
 
-export const DataTable = ({ data, columns, isClickable }) => {
-    isClickable && addScriptFile("datatable.js");
-    return (
-        <table className="datatable table table-sm table-hover">
-            <Headers columns={columns} />
-            <tbody>
-                {data.map(row =>
-                    <Row key={counter++} columns={columns} data={row} isClickable={isClickable} />
-                )}
-            </tbody>
-        </table>
-    );
-}

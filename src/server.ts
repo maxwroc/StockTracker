@@ -1,11 +1,15 @@
+
+import * as mach from "mach";
+import * as mongoose from "mongoose";
+
 import * as path from "path";
 import { controllers } from "./controllers";
 
-import * as mach from "mach";
-const mongoose = require("mongoose");
-
 // Get Mongoose to use the global promise library
-mongoose.Promise = global.Promise;
+mongoose[<string>"Promise"] = global.Promise; // string cast to make TS compiler happy
+
+mongoose.connection.on("error", console.error.bind(console, 'MongoDB connection error:'));
+
 mongoose.connect('mongodb://192.168.2.103:27017/stocktracker', {
     useMongoClient: true,
 }).then(db => {
@@ -16,9 +20,6 @@ mongoose.connect('mongodb://192.168.2.103:27017/stocktracker', {
     app.use(mach.params);
     // exposing public dir
     app.use(mach.file, path.join(__dirname, "public"));
-
-    //Bind connection to error event (to get notification of connection errors)
-    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
     // initialize all controllers
     controllers.forEach(c => new c(app, db));
