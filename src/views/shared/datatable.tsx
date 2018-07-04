@@ -1,5 +1,7 @@
+
 import * as React from 'react';
 import { addScriptFile } from "../master.page";
+import { IViewConstructor } from "../../shared";
 
 let counter = 0;
 

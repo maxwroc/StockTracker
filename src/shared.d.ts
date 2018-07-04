@@ -1,12 +1,13 @@
+import { IStockInfo } from "./providers/shared.provider";
 
 interface IStockData extends IBankierStockData {
 
 }
 
 interface IProvider {
-    market: string;
-    getData(symbol: string): Promise<IStockData>;
-    getSymbols(query: string): Promise<string[]>;
+    market: string,
+    getData(symbol: string): Promise<IStockData>,
+    getSymbols(query: string): Promise<IStockInfo[]>,
 }
 
 interface IBankierStockData {

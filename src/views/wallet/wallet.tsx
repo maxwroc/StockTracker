@@ -1,8 +1,8 @@
-///<reference path="../../shared.d.ts" />
 
 import * as React from 'react';
 import { AddItemForm } from "../add-item.form";
 import { DataTable } from "../shared/datatable";
+import { IViewConstructor } from "../../shared";
 
 import { IWalletModel } from "../../models/wallet"
 

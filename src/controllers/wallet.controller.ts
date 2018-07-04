@@ -76,7 +76,7 @@ export class WalletController {
     private addSymbolToTrack(conn, walletName: string, stockSymbol: string) {
         let wallet: IWalletModel;
 
-        stockSymbol = stockSymbol.toLowerCase();
+        stockSymbol = stockSymbol.toUpperCase();
 
         return WalletModel.findOne({ name: walletName }).exec()
             .then(w => {
@@ -89,19 +89,19 @@ export class WalletController {
 
                 return getProviders("PL")[0].getSymbols(stockSymbol);
             })
-            .then(symbols => {
+            .then(stocksInfo => {
                 // checking if given symbol is valid
-                let result = symbols.find(v => v.toLowerCase() == stockSymbol);
+                let result = stocksInfo.find(s => s.symbol == stockSymbol);
                 if (!result) {
                     throw new Error("Unknown stock symbol");
                 }
 
-                return stockSymbol;
+                return result;
             })
-            .then(stockSymbol => {
+            .then(stockInfo => {
                 // trying to get stock or create it if not found
-                var query = { symbol: stockSymbol },
-                    update = { name: "some name", symbol: stockSymbol, companyName: "Company name " + (new Date().toTimeString()) },
+                var query = { symbol: stockInfo.symbol },
+                    update = { name: stockInfo.ticker, symbol: stockSymbol, companyName: stockInfo.companyName },
                     options = <ModelFindOneAndUpdateOptions>{ upsert: true, new: true, setDefaultsOnInsert: true, returnNewDocument: true };
 
                 return StockModel
@@ -125,10 +125,6 @@ export class WalletController {
                 conn.json(200, { success: "OK", redirect: this.getWalletUrl(wallet) })
             })
             .catch(err => {
-                if (err && err.name == "MongoError" && err.code == 11000 && err.message.indexOf("stocktracker.stocks.$symbol") != -1) {
-                    err.message = "Stock 'symbol' added already";
-                }
-
                 conn.json(200, { error: err.message });
             });
     }

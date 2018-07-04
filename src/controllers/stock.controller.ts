@@ -1,4 +1,5 @@
 
+import { IStockData } from "../shared"
 import { getProviders } from "../providers/provider";
 
 
@@ -27,7 +28,7 @@ export class StockController {
 
         let providers = getProviders("PL");
         return providers[0].getSymbols(query)
-            .then(s => conn.json(200, { success: "OK", result: s }));
+            .then(s => conn.json(200, { success: "OK", result: s.map(i => i.symbol) }));
     }
 }
 

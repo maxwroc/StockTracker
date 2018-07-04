@@ -10,3 +10,9 @@ export async function getJsonData<T>(url: string, converter?: { (input: any): T 
     }
 
 }
+
+export interface IStockInfo {
+    ticker: string;
+    symbol: string;
+    companyName: string;
+}

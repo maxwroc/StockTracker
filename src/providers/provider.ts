@@ -1,6 +1,7 @@
 ///<reference path="../shared.d.ts" />
 
 import { Bankier } from "./bankier.provider";
+import { IProvider } from "../shared";
 
 let providers: IProvider[] = [new Bankier()];
 
