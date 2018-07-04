@@ -28,6 +28,18 @@
     cursor: pointer;
 }
 
+.datatable .delete-item::before {
+    content: "x";
+    padding: 3px;
+    background: #212529;
+    color: #fff;
+    margin: 2px;
+    height: 15px;
+    line-height: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

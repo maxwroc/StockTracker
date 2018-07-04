@@ -12,10 +12,18 @@ export interface IDataTableProps {
 }
 
 export const DataTable: IViewConstructor<IDataTableProps> = ({ data, columns, isClickable }) => {
-    isClickable && addScriptFile("datatable.js");
+
+    let classNames = ["datatable", "table", "table-sm"];
+    if (isClickable) {
+        addScriptFile("datatable.js");
+        classNames.push("table-hover");
+    }
+
+    let hasDeleteButton = data.some(r => r.deleteUrl);
+
     return (
-        <table className="datatable table table-sm table-hover">
-            <Headers columns={columns} />
+        <table className={classNames.join(" ")}>
+            <Headers columns={columns} hasDeleteButton={hasDeleteButton} />
             <tbody>
                 {data.map(row =>
                     <Row key={counter++} columns={columns} data={row} isClickable={isClickable} />
@@ -47,14 +55,18 @@ const Row = ({ data, columns, isClickable }) =>
         {columns.map(e =>
             <td key={counter++}>{formatValue(data[e])}</td>
         )}
+        {data.deleteUrl &&
+            <td data-deleteurl={data.deleteUrl} className="delete-item"></td>}
     </tr>;
 
-const Headers = ({ columns }) =>
+const Headers = ({ columns, hasDeleteButton }) =>
     <thead className="thead-dark">
         <tr>
             {columns.map(c =>
                 <th key={counter++}>{c}</th>
             )}
+            {hasDeleteButton &&
+                <th></th>}
         </tr>
     </thead>;
 

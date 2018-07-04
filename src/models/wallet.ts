@@ -2,14 +2,14 @@ import { model, Document, Model, Schema } from "mongoose";
 
 
 export interface IWalletModel extends Document {
-    name: string,
+    name: string
     stocks: any[],
     createdAt: Date
 }
 
 // create a schema
 let walletSchema = new Schema({
-    name: String,
+    name: { type: String, required: true, unique: true },
     stocks: [{ type: Schema.Types.ObjectId, ref: "Stock" }],
     createdAt: Date
 });

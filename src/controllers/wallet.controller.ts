@@ -12,10 +12,11 @@ export class WalletController {
     constructor(app: any, database: any) {
         app.get("/", conn => conn.redirect("/wallet"));
         app.get("/wallet", conn => this.getWalletList(conn));
-        app.get("/wallet/:name", conn => this.getWallet(conn, conn.params.name));
-        app.post("/wallet/:wallet_name", conn => this.addSymbolToTrack(conn, conn.params.wallet_name, conn.params.name));
-        app.post("/wallet/search", conn => this.search(conn));
+        app.get("/wallet/:name", conn => this.getWallet(conn, decodeURIComponent(conn.params.name)));
+        app.post("/wallet/:wallet_name", conn => this.addSymbolToTrack(conn, decodeURIComponent(conn.params.wallet_name), conn.params.name));
         app.post("/wallet/add", conn => this.createNewWallet(conn, conn.params.name));
+        app.delete("/wallet/:wallet_name", conn => this.deleteWallet(conn, decodeURIComponent(conn.params.wallet_name)));
+        app.delete("/wallet/:wallet_name/:symbol", conn => this.deleteStockFromWallet(conn, decodeURIComponent(conn.params.wallet_name), decodeURIComponent(conn.params.symbol)));
     }
 
     private getWalletList(conn: any) {
@@ -43,6 +44,7 @@ export class WalletController {
             .populate("stocks")
             .exec()
             .then(wallet => {
+                this.decorateWithRemoveUrl(wallet.name, wallet.stocks);
                 conn.send(
                     Master({ title: "Wallet list", body: jsxToString(Wallet, { wallet: wallet }) })
                 );
@@ -53,18 +55,10 @@ export class WalletController {
             });
     }
 
-    private search(conn: any) {
-        return WalletModel.find({})
-            .exec() // get promise
-            .then(wallets => {
-                conn.json(200, { success: "OK", result: wallets.map(w => w["name"]) })
-            });
-    }
-
     private createNewWallet(conn: any, name: string) {
 
         if (name == "") {
-            return new Promise(r => setTimeout(() => r(), 2000)).then(() => conn.json(200, { error: "Name cannot be empty" }));
+            return conn.json(200, { error: "Name cannot be empty" });
         }
 
         return new WalletModel({ name: name, createdAt: new Date() })
@@ -132,6 +126,39 @@ export class WalletController {
     private decorateWithUrl(wallets: any[]) {
         wallets.forEach(w => w.url = this.getWalletUrl(w));
         return wallets;
+    }
+
+    private decorateWithRemoveUrl(walletName: string, stocks: any[]) {
+        stocks.forEach(w => w.deleteUrl = this.getWalletUrl(w));
+        return stocks;
+    }
+
+    private deleteWallet(conn: any, walletName: string) {
+        return WalletModel.deleteOne({ name: walletName })
+            .exec()
+            .then(r => conn.json(200, { success: "OK", redirect: "/wallet" }))
+            .catch(e => conn.json(200, { error: e.message }));
+    }
+
+    private deleteStockFromWallet(conn: any, walletName: string, stockSymbol: string) {
+        return Promise.all(
+            [
+                WalletModel.findOne({ name: walletName }).exec(),
+                StockModel.findOne({ symbol: stockSymbol }).exec()
+            ])
+            .then(([wallet, stock]) => {
+                let stocks = wallet.stocks.filter(s_id => s_id != stock._id);
+
+                if (stocks.length == wallet.stocks.length) {
+                    throw new Error(`Couldn't remove '${stock.symbol}' from wallet`);
+                }
+
+                wallet.stocks = stocks;
+
+                return wallet.save();
+            })
+            .then(wallet => conn.json(200, { success: "OK", redirect: this.getWalletUrl(wallet) }))
+            .catch(e => conn.json(200, { error: e.message }));
     }
 
     private getWalletUrl(wallet: IWalletModel) {
