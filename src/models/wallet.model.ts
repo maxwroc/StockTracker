@@ -1,9 +1,11 @@
 import { model, Document, Model, Schema, Types } from "mongoose";
 import { IStockModel } from "./stock.model";
+import { ICurrencyModel } from "./currency.model";
 
 export interface IWalletModel extends Document {
     name: string
     stocks: Types.DocumentArray<IStockModel>,
+    currency: Types.DocumentArray<ICurrencyModel>,
     createdAt: Date
 }
 
@@ -11,6 +13,7 @@ export interface IWalletModel extends Document {
 let walletSchema = new Schema({
     name: { type: String, required: true, unique: true },
     stocks: [{ type: Schema.Types.ObjectId, ref: "Stock" }],
+    currency: [{ type: Schema.Types.ObjectId, ref: "Currency" }],
     createdAt: Date
 });
 

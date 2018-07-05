@@ -22,8 +22,23 @@ export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
     <div>
         <h1>Wallet details</h1>
         <h3>Name: {wallet.name}</h3>
-        <AddItemForm formAction={"/watchlist/" + encodeURIComponent(wallet.name)} suggestionsDataUrl="/stock/search" submitBtnText="Add stock to watchlist" />
-        <WatchList data={wallet.stocks} />
+        <section>
+            <header>Stocks watchlist</header>
+            <AddItemForm
+                formAction={"/watchlist/" + encodeURIComponent(wallet.name)}
+                suggestionsDataUrl="/stock/search"
+                submitBtnText="Add stock to watchlist" />
+            <WatchList data={wallet.stocks} />
+        </section>
+        <section>
+            <header>Currency watchlist</header>
+            <AddItemForm
+                formAction="/watchlist/currency"
+                suggestionsDataUrl="/currency/search"
+                submitBtnText="Add currency to watchlist"
+                hiddenFields={[{ name: "wallet", value: wallet.name }]} />
+            <WatchList data={wallet.currency} />
+        </section>
     </div>;
 
 

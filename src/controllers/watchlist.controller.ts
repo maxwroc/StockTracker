@@ -7,11 +7,13 @@ import { getProviders } from "../providers/provider";
 
 export class WatchlistController {
     constructor(app: any) {
-        app.put("/watchlist/:wallet", conn => this.add(conn, this.getSafeParams(conn, "wallet", "name")));
-        app.delete("/watchlist/:walletName/:stockSymbol", conn => this.delete(conn, this.getSafeParams(conn, "walletName", "stockSymbol")));
+        app.put("/watchlist/:wallet", conn => this.addStock(conn, this.getSafeParams(conn, "wallet", "name")));
+        app.delete("/watchlist/:walletName/:stockSymbol", conn => this.deleteStock(conn, this.getSafeParams(conn, "walletName", "stockSymbol")));
+
+        app.put("/watchlist/currency", conn => this.callWithSafeParams(this.addCurrency, conn, "wallet", "name"));
     }
 
-    private add(conn: any, { wallet, name }): Promise<IWalletModel> {
+    private addStock(conn: any, { wallet, name }): Promise<IWalletModel> {
         let walletModel: IWalletModel;
 
         name = name.toUpperCase();
@@ -61,7 +63,7 @@ export class WatchlistController {
             .catch(err => conn.json(200, { error: err.message }));
     }
 
-    private delete(conn: any, { walletName, stockSymbol }) {
+    private deleteStock(conn: any, { walletName, stockSymbol }) {
         return StockModel.findOne({ symbol: stockSymbol }).exec()
             .then(stock => WalletModel.update({ name: walletName }, { $pullAll: { stocks: [stock._id] } }).exec())
             .then(r => {
@@ -74,6 +76,10 @@ export class WatchlistController {
             .catch(e => conn.json(200, { error: e.message }));
     }
 
+    private addCurrency(conn, walletName: string, currency: string) {
+
+    }
+
     private getWalletUrl(wallet: IWalletModel | string) {
         return "/wallet/" + encodeURIComponent(typeof wallet == "string" ? wallet : wallet.name);
     }
@@ -82,5 +88,17 @@ export class WatchlistController {
         let result: IMap<string> = {};
         names.forEach(n => result[n] = decodeURIComponent(conn.params[n]));
         return result;
+    }
+
+    private callWithSafeParams<T extends Function>(func: T, conn, ...names: string[]) {
+        names = names.map(n => {
+            if (typeof conn.params[n] == "undefined") {
+                throw new Error("Missing parameter: " + n);
+            }
+
+            return decodeURIComponent(conn.params[n])
+        });
+        names.unshift(conn);
+        return func.apply(this, names);
     }
 }

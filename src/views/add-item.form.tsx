@@ -1,10 +1,18 @@
 import * as React from 'react';
 import { addScriptFile } from "./master.page";
+import { IViewConstructor, IMap } from '../shared';
 
 // make sure all the ids will be unique across the page
 let counter = 0;
 
-export const AddItemForm = ({ formAction, suggestionsDataUrl, submitBtnText }) => {
+interface IAddItemFormProps {
+    formAction: string,
+    suggestionsDataUrl: string,
+    submitBtnText: string,
+    hiddenFields?: { name: string, value: string }[]
+}
+
+export const AddItemForm: IViewConstructor<IAddItemFormProps> = ({ formAction, suggestionsDataUrl, submitBtnText, hiddenFields }) => {
     counter++;
     let dataListId = "suggestions_" + counter;
 
@@ -21,6 +29,8 @@ export const AddItemForm = ({ formAction, suggestionsDataUrl, submitBtnText }) =
             <datalist id="suggestions">
             </datalist>
             <div className="message form-control form-control-sm form-control-plaintext mx-3"></div>
+            {hiddenFields && hiddenFields.map(field =>
+                <input key={counter++} type="hidden" name={field.name} value={field.value} />)}
         </form>
     );
 }

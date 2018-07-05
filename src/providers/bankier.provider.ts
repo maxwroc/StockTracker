@@ -1,7 +1,6 @@
-///<reference path="../shared.d.ts" />
 
-import { IProvider, IStockData, ICurrencyConversionResult } from "../shared"
-import { getJsonData, IStockInfo } from "./shared.provider"
+import { IProvider, IStockData, ICurrencyConversionResult, ICurrencyInfo } from "../shared";
+import { getJsonData, IStockInfo } from "./shared.provider";
 
 const suggestionsPattern = /\<[^\>]*\>([^\<]+)\</g;
 
@@ -31,6 +30,12 @@ export class Bankier implements IProvider {
             i => this.convertToStockInfo(i));
     }
 
+    async getCurrencyCodes(): Promise<ICurrencyInfo[]> {
+        return await getJsonData<ICurrencyInfo[]>(
+            `https://www.bankier.pl/ajax/przelicz_waluty?kod_1=GBP&kod_2=PLN&kwota=1`,
+            c => this.convertToCurrencyModel(c));
+    }
+
     async getCurrencyConversion(from: string, to: string): Promise<ICurrencyConversionResult> {
         return await getJsonData<ICurrencyConversionResult>(
             `https://www.bankier.pl/ajax/przelicz_waluty?kod_1=${from}&kod_2=${to}&kwota=1`,
@@ -58,12 +63,21 @@ export class Bankier implements IProvider {
             });
     }
 
+    private convertToCurrencyModel(response: IBankierCurrencyConversionResult): ICurrencyInfo[] {
+        return response.kody.map(c => {
+            return <ICurrencyInfo>{
+                code: c[0],
+                country: c[1]
+            }
+        });
+    }
+
     private convertToConversionResult(from:string, to: string, input: string): ICurrencyConversionResult {
         let response = this.convertToJSON<IBankierCurrencyConversionResult>(input);
         return {
             from: from,
             to: to,
-            result: 5
+            result: response.wynik
         }
     }
 
