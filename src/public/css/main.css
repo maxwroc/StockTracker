@@ -28,6 +28,9 @@
     cursor: pointer;
 }
 
+.datatable .delete-item {
+    text-align: right;
+}
 .datatable .delete-item::before {
     content: "x";
     padding: 3px;
