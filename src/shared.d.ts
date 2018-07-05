@@ -1,5 +1,9 @@
 import { IStockInfo } from "./providers/shared.provider";
 
+interface IMap<T> {
+    [index: string]: T
+}
+
 interface IStockData extends IBankierStockData {
 
 }

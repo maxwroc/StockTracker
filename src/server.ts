@@ -22,7 +22,7 @@ mongoose.connect('mongodb://192.168.2.103:27017/stocktracker', {
     app.use(mach.file, path.join(__dirname, "public"));
 
     // initialize all controllers
-    controllers.forEach(c => new c(app, db));
+    controllers.forEach(c => new c(app));
 
     mach.serve(app);
 });

@@ -1,6 +1,6 @@
 import { model, Document, Model, Schema } from "mongoose";
 
-export interface IStock extends Document {
+export interface IStockModel extends Document {
     name: string,
     symbol: string,
     companyName: string
@@ -13,6 +13,6 @@ let stockSchema = new Schema({
     companyName: String
 });
 
-export let Stock: Model<IStock> = model("Stock", stockSchema);
+export let StockModel: Model<IStockModel> = model("Stock", stockSchema);
 
-export default Stock;
+export default StockModel;

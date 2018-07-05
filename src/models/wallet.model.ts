@@ -1,9 +1,9 @@
 import { model, Document, Model, Schema, Types } from "mongoose";
-import { IStock } from "./stock";
+import { IStockModel } from "./stock.model";
 
 export interface IWalletModel extends Document {
     name: string
-    stocks: Types.DocumentArray<IStock>,
+    stocks: Types.DocumentArray<IStockModel>,
     createdAt: Date
 }
 
@@ -27,6 +27,6 @@ walletSchema.pre("save", next => {
     next();
 });
 
-export let Wallet: Model<IWalletModel> = model("Wallet", walletSchema);
+export let WalletModel: Model<IWalletModel> = model("Wallet", walletSchema);
 
-export default Wallet;
+export default WalletModel;

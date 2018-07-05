@@ -4,7 +4,7 @@ import { getProviders } from "../providers/provider";
 
 
 export class StockController {
-    constructor(app: any, database: any) {
+    constructor(app: any) {
         app.post('/stock/search', conn => this.searchSymbol(conn, conn.params.name));
         app.get('/stock/:symbol', conn => this.getStock(conn, conn.params.symbol));
         app.post('/stock/add', conn => this.addStock(conn, conn.params.name));

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { AddItemForm } from "../add-item.form";
 import { DataTable } from "../shared/datatable";
 
-import { IWalletModel } from "../../models/wallet";
+import { IWalletModel } from "../../models/wallet.model";
 import { IViewConstructor } from '../../shared';
 
 export interface IWalletListProps {
@@ -21,7 +21,7 @@ const List = ({ data }) => {
 export const WalletList: IViewConstructor<IWalletListProps> = ({ data }) =>
     <div>
         <div>
-            <AddItemForm formAction="/wallet/add" suggestionsDataUrl="" submitBtnText="Add new wallet" />
+            <AddItemForm formAction="/wallet" suggestionsDataUrl="" submitBtnText="Add new wallet" />
         </div>
         <List data={data} />
     </div>;
