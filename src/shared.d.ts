@@ -8,10 +8,17 @@ interface IStockData extends IBankierStockData {
 
 }
 
+interface ICurrencyConversionResult {
+    from: string;
+    to: string;
+    result: number;
+}
+
 interface IProvider {
     market: string,
     getData(symbol: string): Promise<IStockData>,
     getSymbols(query: string): Promise<IStockInfo[]>,
+    getCurrencyConversion(from: string, to: string): Promise<ICurrencyConversionResult>,
 }
 
 interface IBankierStockData {
