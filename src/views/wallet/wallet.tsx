@@ -10,12 +10,21 @@ interface IWalletViewProps {
     wallet: IWalletModel
 }
 
+
+const WatchList = ({ data }) => {
+    if (data && data.length) {
+        return <DataTable isClickable={false} data={data} columns={["name", "symbol", "companyName"]} />
+    }
+
+    return <div>Watchlist empty. Please add stocks to track.</div>
+}
+
 export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
     <div>
         <h1>Wallet details</h1>
         <h3>Name: {wallet.name}</h3>
         <AddItemForm formAction={"/wallet/" + encodeURIComponent(wallet.name)} suggestionsDataUrl="/stock/search" submitBtnText="Add symbol to track" />
-        <DataTable isClickable={false} data={wallet.stocks} columns={["name", "symbol", "companyName"]} />
+        <WatchList data={wallet.stocks} />
     </div>;
 
 

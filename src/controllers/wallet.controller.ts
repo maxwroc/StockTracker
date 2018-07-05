@@ -13,8 +13,8 @@ export class WalletController {
         app.get("/", conn => conn.redirect("/wallet"));
         app.get("/wallet", conn => this.getWalletList(conn));
         app.get("/wallet/:name", conn => this.getWallet(conn, decodeURIComponent(conn.params.name)));
-        app.post("/wallet/:wallet_name", conn => this.addSymbolToTrack(conn, decodeURIComponent(conn.params.wallet_name), conn.params.name));
         app.post("/wallet/add", conn => this.createNewWallet(conn, conn.params.name));
+        app.post("/wallet/:wallet_name", conn => this.addSymbolToTrack(conn, decodeURIComponent(conn.params.wallet_name), conn.params.name));
         app.delete("/wallet/:wallet_name", conn => this.deleteWallet(conn, decodeURIComponent(conn.params.wallet_name)));
         app.delete("/wallet/:wallet_name/:symbol", conn => this.deleteStockFromWallet(conn, decodeURIComponent(conn.params.wallet_name), decodeURIComponent(conn.params.symbol)));
     }
@@ -78,7 +78,7 @@ export class WalletController {
             .then(w => {
                 // getting wallet model
                 if (!w) {
-                    throw new Error("Wallet with given name not found");
+                    throw new Error(`Wallet '${walletName}' not found`);
                 }
 
                 wallet = w;
