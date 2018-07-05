@@ -24,10 +24,15 @@ export const DataTable: IViewConstructor<IDataTableProps> = ({ data, columns, is
         classNames.push("table-hover");
     }
 
+    let headers = columns;
+    if (!Array.isArray(columns)) {
+        columns = Object.keys(columns);
+        headers = columns.map(c => headers[c]);
+    }
 
     return (
         <table className={classNames.join(" ")}>
-            <Headers columns={columns} hasDeleteButton={hasDeleteButton} />
+            <Headers names={headers} hasDeleteButton={hasDeleteButton} />
             <tbody>
                 {data.map(row =>
                     <Row key={counter++} columns={columns} data={row} isClickable={isClickable} />
@@ -63,11 +68,11 @@ const Row = ({ data, columns, isClickable }) =>
             <td data-deleteurl={data.deleteUrl} className="delete-item"></td>}
     </tr>;
 
-const Headers = ({ columns, hasDeleteButton }) =>
+const Headers = ({ names, hasDeleteButton }) =>
     <thead className="thead-dark">
         <tr>
-            {columns.map(c =>
-                <th key={counter++}>{c}</th>
+            {names.map(n =>
+                <th key={counter++}>{n}</th>
             )}
             {hasDeleteButton &&
                 <th></th>}

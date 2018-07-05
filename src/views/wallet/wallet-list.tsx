@@ -12,7 +12,7 @@ export interface IWalletListProps {
 
 const List = ({ data }) => {
     if (data && data.length) {
-        return <DataTable data={data} columns={["name", "createdAt"]} isClickable={true} />
+        return <DataTable data={data} columns={{ "name": "Name", "createdAt": "Created" }} isClickable={true} />
     }
 
     return <div>Wallets not found. Please add one.</div>
