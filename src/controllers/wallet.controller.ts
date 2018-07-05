@@ -44,7 +44,7 @@ export class WalletController {
             .populate("stocks")
             .exec()
             .then(wallet => {
-                this.decorateWithRemoveUrl(wallet.name, wallet.stocks);
+                this.decorateWithRemoveUrl(wallet);
                 conn.send(
                     Master({ title: "Wallet list", body: jsxToString(Wallet, { wallet: wallet }) })
                 );
@@ -72,7 +72,9 @@ export class WalletController {
 
         stockSymbol = stockSymbol.toUpperCase();
 
-        return WalletModel.findOne({ name: walletName }).exec()
+        return WalletModel.findOne({ name: walletName })
+            .populate("stocks")
+            .exec()
             .then(w => {
                 // getting wallet model
                 if (!w) {
@@ -103,15 +105,11 @@ export class WalletController {
                     .exec();
             })
             .then(stock => {
-                console.log(wallet.stocks ? "wallet.stocks already there" : "wallet.stocks not there");
-
-                // add stock symbol to the wallet
-                wallet.stocks = wallet.stocks || [];
-                if (wallet.stocks.indexOf(stock._id) != -1) {
+                if (wallet.stocks.find(s => s._id == stock._id)) {
                     throw new Error("Stock symbol added to the wallet already");
                 }
 
-                wallet.stocks.push(stock._id);
+                wallet.stocks.push(stock);
 
                 return wallet.save();
             })
@@ -128,9 +126,9 @@ export class WalletController {
         return wallets;
     }
 
-    private decorateWithRemoveUrl(walletName: string, stocks: any[]) {
-        stocks.forEach(w => w.deleteUrl = this.getWalletUrl(w));
-        return stocks;
+    private decorateWithRemoveUrl(wallet) {
+        wallet.stocks.forEach(s => s.deleteUrl = this.getWalletUrl(wallet) + "/" + encodeURIComponent(s.symbol));
+        return wallet;
     }
 
     private deleteWallet(conn: any, walletName: string) {
@@ -141,28 +139,20 @@ export class WalletController {
     }
 
     private deleteStockFromWallet(conn: any, walletName: string, stockSymbol: string) {
-        return Promise.all(
-            [
-                WalletModel.findOne({ name: walletName }).exec(),
-                StockModel.findOne({ symbol: stockSymbol }).exec()
-            ])
-            .then(([wallet, stock]) => {
-                let stocks = wallet.stocks.filter(s_id => s_id != stock._id);
-
-                if (stocks.length == wallet.stocks.length) {
-                    throw new Error(`Couldn't remove '${stock.symbol}' from wallet`);
+        return StockModel.findOne({ symbol: stockSymbol }).exec()
+            .then(stock => WalletModel.update({ name: walletName }, { $pullAll: { stocks: [stock._id] } }).exec())
+            .then(r => {
+                if (!r.ok) {
+                    throw new Error("Failed to remove stock symbol from wallet");
                 }
 
-                wallet.stocks = stocks;
-
-                return wallet.save();
+                conn.json(200, { success: "OK", redirect: this.getWalletUrl(walletName) });
             })
-            .then(wallet => conn.json(200, { success: "OK", redirect: this.getWalletUrl(wallet) }))
             .catch(e => conn.json(200, { error: e.message }));
     }
 
-    private getWalletUrl(wallet: IWalletModel) {
-        return "/wallet/" + encodeURIComponent(wallet.name);
+    private getWalletUrl(wallet: IWalletModel | string) {
+        return "/wallet/" + encodeURIComponent(typeof wallet == "string" ? wallet : wallet.name);
     }
 }
 

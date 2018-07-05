@@ -13,13 +13,17 @@ export interface IDataTableProps {
 
 export const DataTable: IViewConstructor<IDataTableProps> = ({ data, columns, isClickable }) => {
 
+    let hasDeleteButton = data.some(r => r.deleteUrl);
     let classNames = ["datatable", "table", "table-sm"];
-    if (isClickable) {
+
+    if (isClickable || hasDeleteButton) {
         addScriptFile("datatable.js");
+    }
+
+    if (isClickable) {
         classNames.push("table-hover");
     }
 
-    let hasDeleteButton = data.some(r => r.deleteUrl);
 
     return (
         <table className={classNames.join(" ")}>
