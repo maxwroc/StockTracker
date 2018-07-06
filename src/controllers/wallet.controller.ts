@@ -1,15 +1,17 @@
 
 import { Master, jsxToString } from "../views/master.page";
 import { WalletList } from "../views/wallet/wallet-list";
-import { Wallet } from "../views/wallet/wallet";
+import { Wallet } from "../views/wallet/wallet-edit";
 
 import { WalletModel } from "../models/wallet.model";
 
 export class WalletController {
     constructor(app: any) {
         app.get("/", conn => conn.redirect("/wallet"));
+        app.get("/wallet/:name", conn => conn.redirect("/wallet/" + conn.params.name + "/edit"));
         app.get("/wallet", conn => this.getWalletList(conn));
-        app.get("/wallet/:name", conn => this.getWallet(conn, decodeURIComponent(conn.params.name)));
+        app.get("/wallet/:name/edit", conn => this.editWallet(conn, decodeURIComponent(conn.params.name)));
+
         app.put("/wallet", conn => this.createNewWallet(conn, conn.params.name));
         app.delete("/wallet/:wallet_name", conn => this.deleteWallet(conn, decodeURIComponent(conn.params.wallet_name)));
     }
@@ -34,7 +36,7 @@ export class WalletController {
             });
     }
 
-    private getWallet(conn, name) {
+    private editWallet(conn, name) {
         return WalletModel.findOne({ name: name })
             .populate(["stocks", "currency"])
             .exec()
