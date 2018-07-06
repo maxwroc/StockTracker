@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { addScriptFile } from "./master.page";
-import { IViewConstructor, IMap } from '../shared';
+import { addScriptFile } from "../master.page";
+import { IViewConstructor, IMap } from '../../shared';
 
 // make sure all the ids will be unique across the page
 let counter = 0;

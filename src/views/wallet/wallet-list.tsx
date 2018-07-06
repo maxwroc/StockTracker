@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { AddItemForm } from "../add-item.form";
+import { AddItemForm } from "../shared/add-item.form";
 import { DataTable } from "../shared/datatable";
 
 import { IWalletModel } from "../../models/wallet.model";
