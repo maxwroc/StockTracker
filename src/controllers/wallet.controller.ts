@@ -59,7 +59,7 @@ export class WalletController {
         return new WalletModel({ name: name, createdAt: new Date() })
             .save()
             .then(w => conn.json(200, { success: "OK", redirect: "/" }))
-            .catch(r => conn.json(200, { error: r }));
+            .catch(e => conn.json(200, { error: e.message }));
     }
 
     private deleteWallet(conn: any, walletName: string) {
@@ -80,7 +80,8 @@ function decorateWithUrl(wallets: any[]) {
 }
 
 function decorateWithRemoveUrl(wallet) {
-    wallet.stocks.forEach(s => s.deleteUrl = getCompleteUrl("watchlist", wallet.name, s.symbol));
+    wallet.stocks.forEach(s => s.deleteUrl = getCompleteUrl("watchlist", wallet.name, "stock", s.symbol));
+    wallet.currency.forEach(c => c.deleteUrl = getCompleteUrl("watchlist", wallet.name, "currency", c.code));
     return wallet;
 }
 

@@ -11,7 +11,8 @@ export class WatchlistController {
 
         app.put("/watchlist/currency", conn => this.callWithSafeParams(this.addCurrency, conn, "wallet", "name"));
         app.put("/watchlist/:wallet", conn => this.addStock(conn, this.getSafeParams(conn, "wallet", "name")));
-        app.delete("/watchlist/:walletName/:stockSymbol", conn => this.deleteStock(conn, this.getSafeParams(conn, "walletName", "stockSymbol")));
+        app.delete("/watchlist/:walletName/stock/:stockSymbol", conn => this.callWithSafeParams(this.deleteStock, conn, "walletName", "stockSymbol"));
+        app.delete("/watchlist/:walletName/currency/:currencyCode", conn => this.callWithSafeParams(this.deleteCurrency, conn, "walletName", "currencyCode"));
 
     }
 
@@ -65,7 +66,7 @@ export class WatchlistController {
             .catch(err => conn.json(200, { error: err.message }));
     }
 
-    private deleteStock(conn: any, { walletName, stockSymbol }) {
+    private deleteStock(conn: any, walletName: string, stockSymbol: string) {
         return StockModel.findOne({ symbol: stockSymbol }).exec()
             .then(stock => WalletModel.update({ name: walletName }, { $pullAll: { stocks: [stock._id] } }).exec())
             .then(r => {
@@ -103,6 +104,19 @@ export class WatchlistController {
             })
             .then(wallet => conn.json(200, { success: "OK", redirect: this.getWalletUrl(wallet) }))
             .catch(err => conn.json(200, { error: err.message }));
+    }
+
+    private deleteCurrency(conn: any, walletName: string, currencyCode: string) {
+        return CurrencyModel.findOne({ code: currencyCode }).exec()
+            .then(currency => WalletModel.update({ name: walletName }, { $pullAll: { currency: [currency._id] } }).exec())
+            .then(r => {
+                if (!r.ok) {
+                    throw new Error("Failed to remove currency from watchlist");
+                }
+
+                conn.json(200, { success: "OK", redirect: this.getWalletUrl(walletName) });
+            })
+            .catch(e => conn.json(200, { error: e.message }));
     }
 
     private getWalletUrl(wallet: IWalletModel | string) {
