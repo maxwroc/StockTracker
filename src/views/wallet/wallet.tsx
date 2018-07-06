@@ -10,12 +10,12 @@ interface IWalletViewProps {
     wallet: IWalletModel
 }
 
-const WatchList = ({ data }) => {
+const WatchList = ({ data, columns }) => {
     if (data && data.length) {
-        return <DataTable isClickable={false} data={data} columns={{ name: "Ticker", symbol: "Symbol", companyName: "Company name" }} />
+        return <DataTable isClickable={false} data={data} columns={columns} />
     }
 
-    return <div>Watchlist empty. Please add stocks to track.</div>
+    return <div>Watchlist empty. Please add items to track.</div>
 }
 
 export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
@@ -28,7 +28,7 @@ export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
                 formAction={"/watchlist/" + encodeURIComponent(wallet.name)}
                 suggestionsDataUrl="/stock/search"
                 submitBtnText="Add stock to watchlist" />
-            <WatchList data={wallet.stocks} />
+            <WatchList data={wallet.stocks} columns={{ name: "Ticker", symbol: "Symbol", companyName: "Company name" }} />
         </section>
         <section>
             <header>Currency watchlist</header>
@@ -37,7 +37,7 @@ export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
                 suggestionsDataUrl="/currency/search"
                 submitBtnText="Add currency to watchlist"
                 hiddenFields={[{ name: "wallet", value: wallet.name }]} />
-            <WatchList data={wallet.currency} />
+            <WatchList data={wallet.currency} columns={{ code: "Code", country: "Country" }} />
         </section>
     </div>;
 

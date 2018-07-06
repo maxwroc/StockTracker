@@ -36,7 +36,7 @@ export class WalletController {
 
     private getWallet(conn, name) {
         return WalletModel.findOne({ name: name })
-            .populate("stocks")
+            .populate(["stocks", "currency"])
             .exec()
             .then(wallet => {
                 decorateWithRemoveUrl(wallet);

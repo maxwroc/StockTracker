@@ -4,13 +4,15 @@ import { IMap } from "../shared"
 import { WalletModel, IWalletModel } from "../models/wallet.model";
 import StockModel from "../models/stock.model";
 import { getProviders } from "../providers/provider";
+import { CurrencyModel } from "../models/currency.model";
 
 export class WatchlistController {
     constructor(app: any) {
+
+        app.put("/watchlist/currency", conn => this.callWithSafeParams(this.addCurrency, conn, "wallet", "name"));
         app.put("/watchlist/:wallet", conn => this.addStock(conn, this.getSafeParams(conn, "wallet", "name")));
         app.delete("/watchlist/:walletName/:stockSymbol", conn => this.deleteStock(conn, this.getSafeParams(conn, "walletName", "stockSymbol")));
 
-        app.put("/watchlist/currency", conn => this.callWithSafeParams(this.addCurrency, conn, "wallet", "name"));
     }
 
     private addStock(conn: any, { wallet, name }): Promise<IWalletModel> {
@@ -52,7 +54,7 @@ export class WatchlistController {
             })
             .then(stock => {
                 if (walletModel.stocks.find(s => s._id == stock._id)) {
-                    throw new Error("Stock symbol added to the wallet already");
+                    throw new Error("Stock symbol added to the watchlist already");
                 }
 
                 walletModel.stocks.push(stock);
@@ -68,7 +70,7 @@ export class WatchlistController {
             .then(stock => WalletModel.update({ name: walletName }, { $pullAll: { stocks: [stock._id] } }).exec())
             .then(r => {
                 if (!r.ok) {
-                    throw new Error("Failed to remove stock symbol from wallet");
+                    throw new Error("Failed to remove stock symbol from watchlist");
                 }
 
                 conn.json(200, { success: "OK", redirect: this.getWalletUrl(walletName) });
@@ -76,8 +78,31 @@ export class WatchlistController {
             .catch(e => conn.json(200, { error: e.message }));
     }
 
-    private addCurrency(conn, walletName: string, currency: string) {
+    private addCurrency(conn, walletName: string, currencyCode: string) {
+        return Promise.all([
+            WalletModel.findOne({ name: walletName }).populate("currency").exec(),
+            CurrencyModel.findOne({ code: currencyCode }).exec()
+        ])
+            .then(([wallet, currency]) => {
+                if (!wallet) {
+                    throw new Error(`Walet '${walletName}' not found`);
+                }
 
+                if (!currency) {
+                    throw new Error("Invalid currency code");
+                }
+
+                // check if currency is not on the list already
+                if (wallet.currency.find(c => c._id == currency._id)) {
+                    throw new Error("Currency added to the watchlist already");
+                }
+
+                wallet.currency.push(currency);
+
+                return wallet.save();
+            })
+            .then(wallet => conn.json(200, { success: "OK", redirect: this.getWalletUrl(wallet) }))
+            .catch(err => conn.json(200, { error: err.message }));
     }
 
     private getWalletUrl(wallet: IWalletModel | string) {
