@@ -30,7 +30,7 @@ export function Master<T>(props: IMasterProps<T>) {
 
 export function addScriptFile(...files: string[]) {
     files.forEach(f => {
-        if (!f.startsWith("http") && !f.startsWith("js/")) {
+        if (!f.startsWith("http") && !f.startsWith("js/") && !f.startsWith("/")) {
             f = "/js/" + f;
         }
 

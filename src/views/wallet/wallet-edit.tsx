@@ -6,7 +6,7 @@ import { IViewConstructor } from "../../shared";
 
 import { IWalletModel } from "../../models/wallet.model"
 
-interface IWalletViewProps {
+interface IWalletEditViewProps {
     wallet: IWalletModel
 }
 
@@ -18,10 +18,9 @@ const WatchList = ({ data, columns }) => {
     return <div>Watchlist empty. Please add items to track.</div>
 }
 
-export const Wallet: IViewConstructor<IWalletViewProps> = ({ wallet }) =>
+export const WalletEdit: IViewConstructor<IWalletEditViewProps> = ({ wallet }) =>
     <div>
-        <h1>Wallet details</h1>
-        <h3>Name: {wallet.name}</h3>
+        <h1>Wallet {wallet.name} - edit</h1>
         <section>
             <header>Stocks watchlist</header>
             <AddItemForm

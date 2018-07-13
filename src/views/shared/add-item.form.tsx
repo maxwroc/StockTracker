@@ -17,7 +17,7 @@ export const AddItemForm: IViewConstructor<IAddItemFormProps> = ({ formAction, s
     let dataListId = "suggestions_" + counter;
 
     // make sure required js code is available
-    addScriptFile("jquery.min.js", "add-item.js");
+    addScriptFile("libs/jquery.min.js", "add-item.js");
 
     return (
         <form method="post" action={formAction} className="add-item form-group form-inline">

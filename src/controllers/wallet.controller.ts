@@ -1,14 +1,15 @@
 
 import { Master, jsxToString } from "../views/master.page";
 import { WalletList } from "../views/wallet/wallet-list";
-import { Wallet } from "../views/wallet/wallet-edit";
+import { WalletEdit } from "../views/wallet/wallet-edit";
 
 import { WalletModel } from "../models/wallet.model";
+import { Wallet } from "../views/wallet/wallet";
 
 export class WalletController {
     constructor(app: any) {
         app.get("/", conn => conn.redirect("/wallet"));
-        app.get("/wallet/:name", conn => conn.redirect("/wallet/" + conn.params.name + "/edit"));
+        app.get("/wallet/:name", conn => this.showWallet(conn, conn.params.name));
         app.get("/wallet", conn => this.getWalletList(conn));
         app.get("/wallet/:name/edit", conn => this.editWallet(conn, decodeURIComponent(conn.params.name)));
 
@@ -20,7 +21,7 @@ export class WalletController {
         return WalletModel.find({})
             .exec() // get promise
             .then(wallets => {
-                conn.send(
+                return conn.send(
                     Master({
                         title: "Wallet list",
                         body: jsxToString(WalletList, { data: decorateWithUrl(wallets) })
@@ -30,25 +31,41 @@ export class WalletController {
             .catch(r => {
                 // TODO: remove console.log
                 console.log("Rejected", r);
-                conn.send(
+                return conn.send(
                     Master({ title: "Wallet list", body: jsxToString(WalletList, {}) })
                 );
             });
     }
 
-    private editWallet(conn, name) {
+    private editWallet(conn, name: string) {
         return WalletModel.findOne({ name: name })
             .populate(["stocks", "currency"])
             .exec()
             .then(wallet => {
                 decorateWithRemoveUrl(wallet);
-                conn.send(
+                return conn.send(
+                    Master({ title: "Wallet list", body: jsxToString(WalletEdit, { wallet: wallet }) })
+                );
+            })
+            .catch(r => {
+                console.log(r);
+                return conn.send(404, "Wallet not found");
+            });
+    }
+
+    private showWallet(conn, walletName: string) {
+        return WalletModel.findOne({ name: walletName })
+            .populate(["stocks", "currency"])
+            .exec()
+            .then(wallet => {
+                decorateWithRemoveUrl(wallet);
+                return conn.send(
                     Master({ title: "Wallet list", body: jsxToString(Wallet, { wallet: wallet }) })
                 );
             })
             .catch(r => {
                 console.log(r);
-                conn.send(404, "Wallet not found");
+                return conn.send(404, "Wallet not found");
             });
     }
 

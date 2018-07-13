@@ -19,7 +19,9 @@ mongoose.connect('mongodb://192.168.2.103:27017/stocktracker', {
     // parsing GET and POST params
     app.use(mach.params);
     // exposing public dir
-    app.use(mach.file, path.join(__dirname, "public"));
+    app.use(mach.file, path.join(__dirname, "../public"));
+    app.use(mach.file, path.join(__dirname, "..", "node_modules/react/umd"));
+    app.use(mach.file, path.join(__dirname, "..", "node_modules/react-dom/umd"));
 
     // initialize all controllers
     controllers.forEach(c => new c(app));

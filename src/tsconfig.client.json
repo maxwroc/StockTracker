@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "sourceMap": false,
+        "module": "none",
+        "outDir": "../public/js",
+        "moduleResolution": "node",
+        "jsx": "react"
+    },
+    "include": [
+        "./client/*.ts",
+        "./client/*.tsx",
+        "./views/**/*.isom.ts",
+        "./views/**/*.isom.tsx"
+    ]
+}

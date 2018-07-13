@@ -5,5 +5,8 @@
         "module": "commonjs",
         "jsx": "react",
         "outDir": "../debug"
-    }
+    },
+    "exclude": [
+        "client"
+    ]
 }
